@@ -6,17 +6,19 @@ const app = express();
 const port = 3000; 
 
 app.use(bodyParser.json());
+app.listen(port, () => {
+    console.log(`Le serveur est à l'écoute sur le port ${port}`);
+});
 
 let token: string = ''; 
-
 
 app.post('/api/token', (req: Request, res: Response) => {
   const { email } = req.body;
   token = generateToken(email);
-  res.send({ token });
+  res.json({ token });
 });
 
 function generateToken(email: string): string {
     const token = crypto.createHash('sha256').update(email).digest('hex');
     return token;
-  }
+}
