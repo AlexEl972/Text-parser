@@ -1,16 +1,16 @@
 import express, { Request, Response } from 'express';
 import bodyParser from 'body-parser';
-import rateLimit from 'express-rate-limit';
+import crypto from 'crypto';
 
-const crypto = require('crypto');
 
 const app = express();
 const port = 3000;
-let token: string = '125d6c977305337a8f9dc708c8eb1d2265113b427f34913d85d15e23ed3c66cc';
+let token: string = '';
 const maxWordsPerDay = 80000;
-let wordCount = 0;
+const maxWordsPerDayPerToken: { [token: string]: number } = {};
+app.use(express.text());
+app.use(express.json());
 
-app.use(bodyParser.text());
 
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', 'http://localhost:3001');
@@ -32,16 +32,16 @@ app.listen(port, () => {
 
 
 
-
 app.post('/api/token', (req: Request, res: Response) => {
   const { email } = req.body;
   token = generateToken(email);
+  app.use(bodyParser.text());
   res.json({ token });
 });
 
 function generateToken(email: string): string {
-  const token = crypto.createHash('sha256').update(email).digest('hex');
-  return token;
+  const temp_token = crypto.createHash('sha256').update(email).digest('hex');
+  return temp_token;
 }
 
 
@@ -52,43 +52,28 @@ function generateToken(email: string): string {
 
 
 
+app.post('/api/test', (req: Request, res: Response) => {
+  res.json({ token });
+});
 
 
-const authenticateToken = (req: Request, res: Response, next: any) => {
-  const authToken = req.headers.authorization;
-  const token = "125d6c977305337a8f9dc708c8eb1d2265113b427f34913d85d15e23ed3c66cc";
-  if (authToken === token) {
-    next();
-  } else {
-    res.sendStatus(401);
-  }
-};
-
-// const limitByToken = rateLimit({
-//   windowMs: 24 * 60 * 60 * 1000,
-//   max: maxCharactersPerDay,
-//   message: "402 Payment Required",
-//   handler: function (req, res) {
-//     res.status(402).send("Payment Required");
-//   },
-// });
-
-
-app.post('/api/justify', authenticateToken, (req: Request, res: Response) => {
-  if (req.get('content-type') === 'text/plain') {
-    const text = req.body;
-    const words = text.split(/\s+/).length;
-    wordCount += words;
-    if (maxWordsPerDay > wordCount) {
-      res.json(wordCount)
-      const justifiedText = justifyText(text);
-      res.send({ justifiedText });
+app.post('/api/justify', (req: Request, res: Response) => {
+  const text = req.body;
+    if (req.get('content-type') === 'text/plain') {
+      const words = text.split(/\s+/).length;
+      if (!maxWordsPerDayPerToken[token]) {
+        maxWordsPerDayPerToken[token] = 0;
+      }
+      if (maxWordsPerDayPerToken[token] + words <= maxWordsPerDay) {
+        maxWordsPerDayPerToken[token] += words;
+        const justifiedText = justifyText(text);
+        res.send({ justifiedText });
+      } else {
+        res.status(402).send("Payment Required");
+      }
     } else {
-      res.status(402).send("Payment Required");
+      res.status(400).send("Bad Request");
     }
-  } else {
-    res.status(400).send("Bad Request");
-  }
 });
 
 
