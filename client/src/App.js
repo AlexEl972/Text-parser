@@ -28,11 +28,12 @@ function App() {
     axios.post('http://localhost:3000/api/justify', text, {
       headers: {
         'Content-Type': 'text/plain',
-        'Authorization': `Bearer ${token}`
+        'Authorization': `${token}`
       }
     })
       .then(response => {
-        console.log(response.data);
+        console.log(response.data.justifiedText
+          );
       })
       .catch(error => console.error('Erreur:', error));
   };
