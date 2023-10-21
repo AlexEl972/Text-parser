@@ -16,7 +16,7 @@ function App() {
   }, [token]);
 
   const generateToken = () => {
-    axios.post('https://test-tech-tictactrip.vercel.app/api/token', { email })
+    axios.post('http://localhost:3001/api/token', { email })
       .then(response => {
         setToken(response.data.token);
         localStorage.setItem('token', response.data.token);
@@ -25,7 +25,7 @@ function App() {
   };
 
   const sendText = () => {
-    axios.post('https://test-tech-tictactrip.vercel.app/api/justify', text, {
+    axios.post('http://localhost:3001/api/justify', text, {
       headers: {
         'Content-Type': 'text/plain',
         'Authorization': `${token}`
