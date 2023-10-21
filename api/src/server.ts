@@ -9,6 +9,7 @@ import crypto from 'crypto';
 // déclarations de variables
 
 const app = express();
+const port = 3001;
 let token: string = '';
 const maxWordsPerDay: number = 80000;
 const maxWordsPerDayPerToken: { [token: string]: number } = {};     // tableau qui associe un token à sa valeur maximale de mots par jour
@@ -32,6 +33,9 @@ app.use((req: Request, res: Response, next: NextFunction) => {
   next();
 });
 
+app.listen(port, () => {
+  console.log(`Le serveur est à l'écoute sur le port ${port}`);
+});
 
 
 // route pour la création d'un nouveau token
