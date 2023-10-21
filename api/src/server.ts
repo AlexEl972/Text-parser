@@ -9,7 +9,6 @@ import crypto from 'crypto';
 // déclarations de variables
 
 const app = express();
-const port: number = 3000;
 let token: string = '';
 const maxWordsPerDay: number = 80000;
 const maxWordsPerDayPerToken: { [token: string]: number } = {};     // tableau qui associe un token à sa valeur maximale de mots par jour
