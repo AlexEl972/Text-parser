@@ -31,12 +31,20 @@ function App() {
         'Authorization': `${token}`
       }
     })
-      .then(response => {
-        console.log(response.data.justifiedText
-          );
-      })
-      .catch(error => console.error('Erreur:', error));
+    .then(response => {
+      const text = response.data;
+      const newWindow = window.open();
+      newWindow.document.write(`
+        <html>
+          <body>
+            <pre>${text}</pre>
+          </body>
+        </html>
+      `);
+    })
+    .catch(error => alert('Erreur:', error));
   };
+  
 
   return (
     <div className="App">

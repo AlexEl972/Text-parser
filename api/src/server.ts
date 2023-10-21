@@ -13,21 +13,20 @@ app.use(express.json());
 
 
 app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', '*');
-  res.header(
-    'Access-Control-Allow-Headers',
-    'Origin, X-Requested-With, Content-Type, Accept, Authorization'
-  );
-  if (req.method === 'OPTIONS') {
-    res.header('Access-Control-Allow-Methods', 'POST');
-    return res.status(200).json({});
-  }
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader("Access-Control-Allow-Credentials", "true");
+  res.setHeader("Access-Control-Max-Age", "1800");
+  res.setHeader('Access-Control-Allow-Headers', 'X-CSRF-Token,Origin, X-Requested-With, Content, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, Authorization');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
   next();
 });
 
-app.listen(port, () => {
-  console.log(`Le serveur est à l'écoute sur le port ${port}`);
+
+app.use((req, res) => {
+  res.json({ message: "UPDATE !" }); 
 });
+
+
 
 
 
@@ -100,3 +99,6 @@ export function justifyText(text: string): string {
   }
   return result;
 }
+
+
+module.exports = app;
