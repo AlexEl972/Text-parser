@@ -13,7 +13,7 @@ app.use(express.json());
 
 
 app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', 'http://localhost:3001');
+  res.header('Access-Control-Allow-Origin', '*');
   res.header(
     'Access-Control-Allow-Headers',
     'Origin, X-Requested-With, Content-Type, Accept, Authorization'
@@ -39,7 +39,7 @@ app.post('/api/token', (req: Request, res: Response) => {
   res.json({ token });
 });
 
-function generateToken(email: string): string {
+export function generateToken(email: string): string {
   const temp_token = crypto.createHash('sha256').update(email).digest('hex');
   return temp_token;
 }
@@ -49,12 +49,6 @@ function generateToken(email: string): string {
 
 
 
-
-
-
-app.post('/api/test', (req: Request, res: Response) => {
-  res.json({ token });
-});
 
 
 app.post('/api/justify', (req: Request, res: Response) => {
@@ -67,7 +61,7 @@ app.post('/api/justify', (req: Request, res: Response) => {
       if (maxWordsPerDayPerToken[token] + words <= maxWordsPerDay) {
         maxWordsPerDayPerToken[token] += words;
         const justifiedText = justifyText(text);
-        res.send({ justifiedText });
+        res.send(justifiedText);
       } else {
         res.status(402).send("Payment Required");
       }
@@ -77,7 +71,7 @@ app.post('/api/justify', (req: Request, res: Response) => {
 });
 
 
-function justifyText(text: string): string {
+export function justifyText(text: string): string {
   const maxLength = 80;
   let result: string = '';
   let line: string = '';
