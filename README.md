@@ -1,4 +1,4 @@
-# test-tech-tictactrip
+# Text-parser
 
 ouvrez deux terminaux 
 
